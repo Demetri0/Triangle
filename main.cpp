@@ -1,9 +1,15 @@
 #include <iostream>
-#include <fstream>
 #include <stdio.h>
 
 inline int max(int a, int b){
     return (a > b)? a : b;
+}
+inline int countNum(const char* fileName){
+    FILE *f = fopen( fileName, "rt" );
+    int i = 0, x;
+    while( fscanf(f, "%i", &x) == 1 ){++i;}
+    fclose(f);
+    return i;
 }
 
 class Node{
@@ -37,7 +43,6 @@ public:
     }
 
     int go(){
-        std::cout << ">" << _x << std::endl;
         if( (_prevNode == NULL) || (_nextNode == NULL) ){
            return _x;
         }else{
@@ -48,26 +53,33 @@ public:
 
 int main(int argc, char** argv)
 {
-    std::string fileName("Triangle.in");
+    char* fileIn = "Triangle.in";
+    char* fileOut = "Triangle.out";
     if(argc > 1){
-        fileName = argv[1];
+        fileIn = argv[1];
+        if(argc > 2)
+            fileOut = argv[2];
     }
 
-    FILE *f = fopen( fileName.data(), "rt" );
+    FILE *f = fopen( fileIn, "rt" );
 
     int x, i = 0;
-    int count = 15; // #FixMe : HardCode
+    int count = countNum( fileIn );
     int currentLine = 1;
     int nextLine = 1;
+
+    // Создаём дерево
     Node** tree = new Node*[count];
     for(int j=0; j<count; ++j){
         tree[j] = new Node(0);
     }
+
     // Пишем шапку таблицы
-    std::cout << "i" << " : (x) | " << "currentLine" << std::endl;
     while( fscanf(f, "%i", &x) == 1 ){
         // Создаём узел в дереве
-//        tree[i] = new Node(x);
+        // tree[i] = new Node(x);
+
+        // Инициализируем значение узла
         tree[i]->x(x);
 
         if( i == nextLine ){
@@ -79,30 +91,22 @@ int main(int argc, char** argv)
         }
 
         if( (count - currentLine) > i ){
-            std::cout << "+";
             tree[i]->prevNode( tree[i+currentLine] );
             tree[i]->nextNode( tree[i+currentLine+1] );
         }
 
-        std::cout << i << " : (" << x << ") | " << currentLine << std::endl;
-
         ++i;
     }
-    std::cout << "Result: " << tree[0]->go() << std::endl;
-
     fclose(f);
 
-    /*
-    std::fstream file;
-    file.open(fileName.data(), std::ios::binary | std::ios::in | std::ios::out);
+    // Вычисляем!
+    int result = tree[0]->go();
+    std::cout << "Result: " << result << std::endl;
 
-    char one[64];
-
-    file.getline(one, sizeof(one));
-    std::cout << one << std::endl;
-
-    file.close();
-    */
+    // Пишем в файл
+    f = fopen( fileOut, "wt" );
+    fprintf(f,"%i",result);
+    fclose(f);
 
     return 0;
 }
