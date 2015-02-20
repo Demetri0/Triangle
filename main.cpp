@@ -1,9 +1,12 @@
 #include <iostream>
 #include <stdio.h>
 
+// Максимально число из двух
 inline int max(int a, int b){
     return (a > b)? a : b;
 }
+
+// Подсчёт кол-ва чисел в файле
 inline int countNum(const char* fileName){
     FILE *f = fopen( fileName, "rt" );
     int i = 0, x;
@@ -18,11 +21,14 @@ private:
     Node* _nextNode;
     Node* _prevNode;
 public:
+    // Конструктор с очень важной инициализацией
     Node(int x){
         _x = x;
         _nextNode = NULL;
         _prevNode = NULL;
     }
+
+    // Бесполезная мешура
     int x(){
         return _x;
     }
@@ -43,9 +49,11 @@ public:
     }
 
     int go(){
+        // Если нет связанных узлов возвращаем значение текущего узла
         if( (_prevNode == NULL) || (_nextNode == NULL) ){
            return _x;
         }else{
+            // Значение текущего узла + максимальное из связанных узлов
             return _x + max( _prevNode->go(), _nextNode->go() );
         }
     }
@@ -55,16 +63,22 @@ int main(int argc, char** argv)
 {
     char* fileIn = "Triangle.in";
     char* fileOut = "Triangle.out";
+
+    // Если есть параметры считаем первый
+    // именеи входного файла
     if(argc > 1){
         fileIn = argv[1];
+        // Если есть второй аргумент - считаем его именем
+        // выходного файла
         if(argc > 2)
             fileOut = argv[2];
     }
 
-    FILE *f = fopen( fileIn, "rt" );
-
+    // Получаемое значение и текущая итерация
     int x, i = 0;
+    // Кол-во чисел в файле
     int count = countNum( fileIn );
+    // Изначальные строка и конец строки
     int currentLine = 1;
     int nextLine = 1;
 
@@ -74,7 +88,8 @@ int main(int argc, char** argv)
         tree[j] = new Node(0);
     }
 
-    // Пишем шапку таблицы
+    FILE *f = fopen( fileIn, "rt" );
+
     while( fscanf(f, "%i", &x) == 1 ){
         // Создаём узел в дереве
         // tree[i] = new Node(x);
@@ -90,6 +105,7 @@ int main(int argc, char** argv)
             nextLine += currentLine;
         }
 
+        // Создаём связи
         if( (count - currentLine) > i ){
             tree[i]->prevNode( tree[i+currentLine] );
             tree[i]->nextNode( tree[i+currentLine+1] );
