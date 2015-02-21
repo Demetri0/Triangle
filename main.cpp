@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdio.h>
 
 // Максимально число из двух
@@ -89,6 +88,10 @@ int main(int argc, char** argv)
     }
 
     FILE *f = fopen( fileIn, "rt" );
+    if(f == 0){
+        printf("Error! File '%s' is not exists.\n", fileIn);
+        return 1;
+    }
 
     while( fscanf(f, "%i", &x) == 1 ){
         // Создаём узел в дереве
@@ -117,7 +120,7 @@ int main(int argc, char** argv)
 
     // Вычисляем!
     int result = tree[0]->go();
-    std::cout << "Result: " << result << std::endl;
+    printf("Result: %i\n", result);
 
     // Пишем в файл
     f = fopen( fileOut, "wt" );
